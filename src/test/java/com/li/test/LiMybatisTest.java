@@ -2,10 +2,8 @@ package com.li.test;
 
 import com.li.entity.Monster;
 import com.li.limybatis.config.MapperBean;
-import com.li.limybatis.sqlsession.Executor;
-import com.li.limybatis.sqlsession.MyConfiguration;
-import com.li.limybatis.sqlsession.MyExecutor;
-import com.li.limybatis.sqlsession.MySqlSession;
+import com.li.limybatis.sqlsession.*;
+import com.li.mapper.MonsterMapper;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -45,5 +43,23 @@ public class LiMybatisTest {
         System.out.println("mapperBean=" + mapperBean);
     }
 
+    @Test
+    public void getMapper() {
+        MySqlSession mySqlSession = new MySqlSession();
+        //mapper为代理类型
+        MonsterMapper mapper = mySqlSession.getMapper(MonsterMapper.class);
+        System.out.println("mapper的运行类型=" + mapper.getClass());//class com.sun.proxy.$Proxy4
+        Monster monster = mapper.getMonsterById(1);
+        System.out.println("monster--" + monster);
+    }
+
+    @Test
+    public void openSession() {
+        MySqlSession mySqlSession = MySessionFactory.openSession();
+        MonsterMapper mapper = mySqlSession.getMapper(MonsterMapper.class);
+        System.out.println("mapper的运行类型=" + mapper.getClass());
+        Monster monster = mapper.getMonsterById(1);
+        System.out.println("monster--" + monster);
+    }
 
 }
