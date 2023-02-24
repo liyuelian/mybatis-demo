@@ -1,6 +1,7 @@
 package com.li.test;
 
 import com.li.entity.Monster;
+import com.li.limybatis.config.MapperBean;
 import com.li.limybatis.sqlsession.Executor;
 import com.li.limybatis.sqlsession.MyConfiguration;
 import com.li.limybatis.sqlsession.MyExecutor;
@@ -36,4 +37,13 @@ public class LiMybatisTest {
                 (Monster) mySqlSession.selectOne("select * from monster where id=?", 1);
         System.out.println("monster=" + monster);
     }
+
+    @Test
+    public void readMapper() {
+        MyConfiguration myConfiguration = new MyConfiguration();
+        MapperBean mapperBean = myConfiguration.readMapper("MonsterMapper.xml");
+        System.out.println("mapperBean=" + mapperBean);
+    }
+
+
 }

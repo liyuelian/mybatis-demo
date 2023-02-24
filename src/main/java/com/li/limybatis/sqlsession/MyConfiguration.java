@@ -1,5 +1,7 @@
 package com.li.limybatis.sqlsession;
 
+import com.li.limybatis.config.Function;
+import com.li.limybatis.config.MapperBean;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -7,6 +9,9 @@ import org.dom4j.io.SAXReader;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author 李
@@ -88,5 +93,62 @@ public class MyConfiguration {
             e.printStackTrace();
         }
         return connection;
+    }
+
+    /**
+     * 读取xxMapper.xml，创建MapperBean对象
+     *
+     * @param path xml的路径 +文件名，是从类的加载路径计算的，如果xml文件是放在resource目录下，直接传入文件名即可
+     * @return 返回MapperBean对象
+     */
+    public MapperBean readMapper(String path) {
+        MapperBean mapperBean = new MapperBean();
+        try {
+            //获取到mapper.xml文件对应的InputStream
+            InputStream stream = loader.getResourceAsStream(path);
+            SAXReader reader = new SAXReader();
+            //获取到xml文件对应的document
+            Document document = reader.read(stream);
+            //得到xml的根节点
+            Element root = document.getRootElement();
+            //获取到 namespace
+            String namespace = root.attributeValue("namespace").trim();
+            //设置mapperBean的属性interfaceName
+            mapperBean.setInterfaceName(namespace);
+            //遍历获取root的子节点-生成 Function
+            Iterator rootIterator = root.elementIterator();
+            //保存接口下的所有方法信息
+            List<Function> list = new ArrayList<>();
+            while (rootIterator.hasNext()) {
+                //取出一个子元素
+                /**
+                 * <select id="getMonsterById" resultType="com.li.entity.Monster">
+                 *       select * from monster where id = ?
+                 * </select>
+                 */
+                Element e = (Element) rootIterator.next();
+                Function function = new Function();
+                String sqlType = e.getName().trim();
+                String funcName = e.attributeValue("id").trim();
+                //这里的resultType是返回类型的全路径-全类名
+                String resultType = e.attributeValue("resultType").trim();
+                String sql = e.getText().trim();
+                //将信息封装到 function对象中
+                function.setSql(sql);
+                function.setFuncName(funcName);
+                function.setSqlType(sqlType);
+                //这里的function.resultType应该为Object类型
+                //因此使用反射生成对象，再放入function中
+                Object instance = Class.forName(resultType).newInstance();
+                function.setResultType(instance);
+                //将封装好的function对象放到list中
+                list.add(function);
+            }
+
+            mapperBean.setFunctions(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mapperBean;
     }
 }

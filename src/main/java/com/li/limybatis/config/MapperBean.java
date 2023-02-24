@@ -2,6 +2,7 @@ package com.li.limybatis.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  */
 @Setter
 @Getter
+@ToString
 public class MapperBean {
     private String interfaceName;//接口名
     //接口下的所有方法

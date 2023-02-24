@@ -2,6 +2,7 @@ package com.li.limybatis.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author 李
@@ -10,6 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class Function {
     private String sqlType;//sql类型，如select，update，insert，delete
     private String funcName;//方法名
