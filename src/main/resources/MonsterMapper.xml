@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper namespace="com.li.mapper.MonsterMapper">
+    <!--实现配置接口方法getMonsterById-->
+    <select id="getMonsterById" resultType="com.li.entity.Monster">
+        select * from monster where id = ?
+    </select>
+</mapper>
